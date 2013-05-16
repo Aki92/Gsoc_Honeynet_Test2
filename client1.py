@@ -35,7 +35,7 @@ def clientComm(DEST):
     ARBDATA = dumps(raw_input("Enter Arbitrary Data to Send to Server: \n"))
 
     # Receiving arbitrary data from Server
-    data = sock.send(ARBDATA)
+    data = sock.sendall(ARBDATA)
     
     sock.close()
 
