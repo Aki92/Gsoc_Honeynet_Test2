@@ -35,7 +35,8 @@ def clientComm(DEST):
     
     # Converting received data into original 
     # data by using Pickle loads
-    print "Data Forwarded from Client 1: \n" + str(loads(ARBDATA))
+    print "Data Forwarded from Client 1: \n" + \
+           str(loads(ARBDATA))
     
     sock.close()
 
