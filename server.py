@@ -40,7 +40,7 @@ if __name__ == '__main__':
         continue
     
     # Sending data to Client2
-    send_conn.send(ARBDATA)
+    send_conn.sendall(ARBDATA)
     
     # Closing the socket
     sock.close()
