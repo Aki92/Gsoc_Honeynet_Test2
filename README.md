@@ -26,5 +26,5 @@ Files: config.py
 ```$ python client.py --host 127.0.0.1 --send datafile.txt```		
 ```$ python client.py --host 127.0.0.1 --recv```		
 
-(**Command for HELP**: 	```python client.py --help```)		
+(Command for HELP: 	```python client.py --help```)		
 
