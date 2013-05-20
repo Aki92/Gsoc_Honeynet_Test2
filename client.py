@@ -23,19 +23,21 @@ class check_file(argparse.Action):
         else:
             parser.error('Please enter Correct File Name')
 
-# Description of Command Line arguments
-parser = argparse.ArgumentParser(description='Takes Server Address and Client Type.')
+def parsing():
+    # Description of Command Line arguments
+    parser = argparse.ArgumentParser(description='Takes Server Address and Client Type.')
 
-# Optional Argument for Server Address
-parser.add_argument('--host',default='127.0.0.1', type=str, action=check_host,
-                   help='Server Address to Connect with (default value : 127.0.0.1)')
+    # Optional Argument for Server Address
+    parser.add_argument('--host',default='127.0.0.1', type=str, action=check_host,
+                       help='Server Address to Connect with (default value : 127.0.0.1)')
 
-# Mutually Exclusive Group for Client Type with Send & Recv options
-client_type = parser.add_mutually_exclusive_group(required=True)
-client_type.add_argument('--send', type=str, action=check_file,
-                        help='Client Send File to Server')
-client_type.add_argument('--recv', action='store_true',
-                        help='Client Receive File from Server')
+    # Mutually Exclusive Group for Client Type with Send & Recv options
+    client_type = parser.add_mutually_exclusive_group(required=True)
+    client_type.add_argument('--send', type=str, action=check_file,
+                            help='Client Send File to Server')
+    client_type.add_argument('--recv', action='store_true',
+                            help='Client Receive File from Server')
+    return parser.parse_args()
 
 """ Main Client Code """
 class Client(object):
@@ -60,17 +62,21 @@ class Client(object):
 
     """ Sending File Data to Server"""
     def sendFile(self):
-        fileobj = open(self.filename,'r')
-        filedata = fileobj.read()
-        # Converting file data into String
-        DATA = dumps(filedata)
-        self.sock.send(DATA)
+        fileobj = open(self.filename,'rb')
+        # Reading file content in small chunks instead
+        # of reading whole at a time
+        filedata = fileobj.read(BUFSIZE)
+        while filedata:
+            # Converting file data into String
+            DATA = dumps(filedata)
+            self.sock.send(DATA)
+            filedata = fileobj.read(BUFSIZE)            
         fileobj.close()
         self.sock.close()
 
     """ Receiving File Data from Server"""
     def recvFile(self):
-        fileobj = open("recv.txt","w")
+        fileobj = open("recv.pdf","wb")
         DATA = ""
         # Receiving Arbitrary Data from Server
         while True:
@@ -87,7 +93,8 @@ class Client(object):
     
 if __name__ == '__main__':
     # Parsing the Command Line Arguments
-    args = parser.parse_args()
+    args = parsing()
+    
     host = args.host
     filename = ""
     if args.recv:
@@ -98,7 +105,6 @@ if __name__ == '__main__':
 
     # Making Client Object
     client = Client(host, opt, filename)
-
     if opt == "recv":
         client.recvFile()
     else:
